@@ -175,9 +175,13 @@
     toolbar.style.cssText = "height:50px; background:#222; display:flex; align-items:center; padding:0 15px; gap:10px; border-bottom:1px solid #333;";
     toolbar.innerHTML = `
       <b style="color:white; font-size:12px; white-space:nowrap;">URL:</b>
-      <input id="yt-url" placeholder="YouTubeのURLを貼り付け（例: https://www.youtube.com/watch?v=...）" style="flex:1; padding:8px 12px; border-radius:4px; border:none; background:#333; color:white; font-size:12px; outline:none;">
+      <input id="yt-url" placeholder="YouTube URLを貼り付け（規制回避プロキシ経由で再生します）" style="flex:1; padding:8px 12px; border-radius:4px; border:none; background:#333; color:white; font-size:12px; outline:none;">
       <button id="yt-play" style="padding:8px 20px; background:#ff0000; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">再生</button>
     `;
+    
+    const bypassInfo = el("div");
+    bypassInfo.style.cssText = "background:#1a1a1a; color:#0f0; font-size:10px; padding:4px 15px; border-bottom:1px solid #333; font-family:monospace;";
+    bypassInfo.innerText = "🛡️ Filtering Bypass Mode (Proxy: yewtu.be) is ACTIVE";
     
     const iframe = el("iframe");
     iframe.style.cssText = "flex:1; border:none; background:#000;";
@@ -198,12 +202,17 @@
       else if (url.includes('embed/')) videoId = url.split('embed/')[1].split('?')[0];
 
       if (videoId) {
-        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+        // プロキシサーバー (Invidious) を経由して再生することで規制を回避
+        iframe.src = `https://yewtu.be/embed/${videoId}?autoplay=1`;
         inp.value = `https://www.youtube.com/watch?v=${videoId}`;
+        console.log("Playing via Filtering Bypassing Proxy...");
       } else {
-        // IDが見つからない場合はGoogle検索経由またはそのまま
-        if (!url.startsWith('http')) url = 'https://' + url;
-        iframe.src = url;
+        // IDが見つからない場合もプロキシ経由で検索
+        if (!url.startsWith('http')) {
+          iframe.src = 'https://yewtu.be/search?q=' + encodeURIComponent(url);
+        } else {
+          iframe.src = url;
+        }
       }
     };
 
@@ -211,6 +220,7 @@
     playBtn.onclick = playVideo;
 
     container.appendChild(toolbar);
+    container.appendChild(bypassInfo);
     container.appendChild(iframe);
     createWindow({ title: "YouTube Player", icon: "🎬", content: container, width: 800, height: 500 });
   }
