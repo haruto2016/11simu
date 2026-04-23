@@ -100,8 +100,11 @@
 
       @keyframes w11-open { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     `;
-    document.body.appendChild(style);
-    document.body.appendChild(overlay);
+    const stageParent = Scratch.vm.runtime.renderer.canvas.parentElement;
+    stageParent.style.position = "relative";
+    stageParent.style.overflow = "hidden";
+    stageParent.appendChild(style);
+    stageParent.appendChild(overlay);
 
     // Taskbar
     taskbar = el("div", "w11-taskbar");
@@ -282,9 +285,10 @@
   // --- Auth UI ---
   function showLoginUI() {
     const div = el("div");
-    div.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); backdrop-filter:blur(30px); z-index:99999; display:flex; align-items:center; justify-content:center; color:white;";
+    div.style.cssText = "position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); backdrop-filter:blur(30px); z-index:99999; display:flex; align-items:center; justify-content:center; color:white;";
     div.innerHTML = `<div style="background:rgba(255,255,255,0.05); padding:40px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); text-align:center; width:340px;"><img src="https://img.icons8.com/fluency/96/user-male-circle.png" style="width:80px; margin-bottom:20px;"><h2>Windows 11</h2><input id="u" placeholder="User" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:none; background:rgba(0,0,0,0.2); color:white;"><input id="p" type="password" placeholder="Pass" style="width:100%; padding:10px; margin-bottom:20px; border-radius:5px; border:none; background:rgba(0,0,0,0.2); color:white;"><button id="bl" style="width:100%; padding:10px; background:#0078d4; border:none; border-radius:5px; color:white; cursor:pointer;">Sign in</button><br><button id="br" style="margin-top:15px; background:none; border:none; color:#aaa; cursor:pointer;">Register</button><p id="am" style="margin-top:20px; font-size:12px;"></p></div>`;
-    document.body.appendChild(div);
+    const stageParent = Scratch.vm.runtime.renderer.canvas.parentElement;
+    stageParent.appendChild(div);
     const m = div.querySelector('#am');
     div.querySelector('#bl').onclick = async () => {
       const res = await apiRequest('/auth/login', 'POST', {username: div.querySelector('#u').value, password: div.querySelector('#p').value});
