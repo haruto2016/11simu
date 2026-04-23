@@ -344,22 +344,42 @@
       <button id="r" style="margin-top:10px;background:none;border:none;color:#aaa;cursor:pointer;">Register</button>
     `;
     document.body.appendChild(div);
+    const msg = div.querySelector('#auth-msg') || el('p');
+    msg.id = 'auth-msg';
+    msg.style.marginTop = '15px';
+    if (!div.querySelector('#auth-msg')) div.querySelector('div').appendChild(msg);
+
     div.querySelector('#l').onclick = async () => {
       const username = div.querySelector('#u').value;
       const password = div.querySelector('#p').value;
-      const res = await apiRequest('/auth/login', 'POST', {username, password});
-      if (res.status === 'success') {
-        currentUser = username;
-        localStorage.setItem('win11_user', username);
-        div.remove();
-        await loadCloudFiles();
-      }
+      msg.innerText = 'Signing in...';
+      try {
+        const res = await apiRequest('/auth/login', 'POST', {username, password});
+        if (res.status === 'success') {
+          currentUser = username;
+          localStorage.setItem('win11_user', username);
+          div.remove();
+          await loadCloudFiles();
+        } else {
+          msg.innerText = res.message || 'Login failed';
+        }
+      } catch (e) { msg.innerText = 'Connection error'; }
     };
+
     div.querySelector('#r').onclick = async () => {
       const username = div.querySelector('#u').value;
       const password = div.querySelector('#p').value;
-      await apiRequest('/auth/register', 'POST', {username, password});
-      alert("Registered!");
+      msg.innerText = 'Registering...';
+      try {
+        const res = await apiRequest('/auth/register', 'POST', {username, password});
+        if (res.status === 'success') {
+          msg.innerText = 'Account created! Now Sign in.';
+          msg.style.color = '#00ff00';
+        } else {
+          msg.innerText = res.message || 'Registration failed';
+          msg.style.color = '#ff4444';
+        }
+      } catch (e) { msg.innerText = 'Connection error'; }
     };
   }
 
