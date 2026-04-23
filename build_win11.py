@@ -288,7 +288,7 @@ class B:
 
     # Custom Extension blocks
     def win11_init(self):
-        return self._blk("win11_initDesktop", {}, {})
+        return self._blk("win11_init", {}, {})
 
     def resolve_parents(self):
         for uid, blk in self.blocks.items():
