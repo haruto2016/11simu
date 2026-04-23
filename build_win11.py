@@ -326,44 +326,38 @@ def build():
         if f.lower().startswith("wallpaper") and f.lower().endswith((".png", ".jpg", ".jpeg")):
             wallpaper_files.append(os.path.join(png_dir, f))
     
-    # ---- Generate PNG wallpapers if needed ----
-    wallpaper_assets = []  # (filename_in_zip, bytes_data)
+    # ---- Load Wallpaper Assets ----
+    wallpaper_assets = []
+    wp_names = ["Fluid Abstract", "Blue Bloom Light", "Blue Bloom Dark", "Organic Abstract"]
     
-    if len(wallpaper_files) >= 3:
-        print(f"[OK] Found {len(wallpaper_files)} wallpaper files, using first 3")
-        for i, wf in enumerate(wallpaper_files[:3]):
-            with open(wf, "rb") as f:
-                data = f.read()
-            wallpaper_assets.append(data)
-    else:
-        print("[INFO] Generating wallpaper PNGs programmatically...")
-        
-        if wallpaper_files:
-            # Use existing files first
-            for wf in wallpaper_files:
-                with open(wf, "rb") as f:
-                    wallpaper_assets.append(f.read())
-            print(f"  [OK] Used {len(wallpaper_files)} existing wallpaper(s)")
-        
-        generators = [
-            ("Dark Abstract", create_wallpaper_dark_abstract),
-            ("Light Bloom", create_wallpaper_light_bloom),
-            ("Dark Bloom", create_wallpaper_dark_bloom),
-        ]
-        
-        for i in range(len(wallpaper_assets), 3):
-            name, gen_func = generators[i]
-            print(f"  Generating wallpaper {i+1}: {name}...")
-            pixels = gen_func(W, H)
-            png_data = create_png(W, H, pixels)
-            wallpaper_assets.append(png_data)
-            
-            # Also save to disk for inspection
-            fname = f"wallpaper_{i+1}.png"
-            with open(os.path.join(png_dir, fname), "wb") as f:
-                f.write(png_data)
-            print(f"  [OK] Saved {fname} ({len(png_data)} bytes)")
+    for i in range(1, 5):
+        fname = f"wallpaper_{i}.jpg"
+        if os.path.exists(fname):
+            with open(fname, "rb") as f:
+                wallpaper_assets.append(f.read())
+            print(f"  [OK] Loaded {fname}")
+        else:
+            # Fallback to procedural if missing (should not happen if copy succeeded)
+            print(f"  [WARN] {fname} not found, generating sample...")
+            wallpaper_assets.append(create_png(W, H, create_wallpaper_light_bloom(W, H)))
+
+    # ---- Build costumes for wallpapers ----
+    backdrop_costumes = []
+    backdrop_asset_map = {}
     
+    for i, wp_data in enumerate(wallpaper_assets):
+        md5 = md5_bytes(wp_data)
+        ext = "jpg"
+        md5ext = f"{md5}.{ext}"
+        backdrop_costumes.append({
+            "assetId": md5,
+            "name": wp_names[i],
+            "md5ext": md5ext,
+            "dataFormat": ext,
+            "rotationCenterX": W // 2,
+            "rotationCenterY": H // 2,
+        })
+        backdrop_asset_map[md5ext] = wp_data    
     # ---- Create empty costume for controller sprite ----
     empty_svg = '<svg version="1.1" width="2" height="2" viewBox="-1 -1 2 2" xmlns="http://www.w3.org/2000/svg"></svg>'
     empty_svg_bytes = empty_svg.encode("utf-8")
