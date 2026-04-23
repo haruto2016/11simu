@@ -358,18 +358,21 @@ def build():
             "rotationCenterY": H // 2,
         })
         backdrop_asset_map[md5ext] = wp_data    
+    # ---- Build Scratch blocks ----
+    print("[INFO] Building Scratch blocks...")
+    b = B()
+    
+    # Sequence: When Flag Clicked -> Windows Init
+    f = b.flag()
+    i = b.win11_init()
+    b._chain([f, i], top=True)
+    b.resolve_parents()
+    
     # ---- Create empty costume for controller sprite ----
     empty_svg = '<svg version="1.1" width="2" height="2" viewBox="-1 -1 2 2" xmlns="http://www.w3.org/2000/svg"></svg>'
     empty_svg_bytes = empty_svg.encode("utf-8")
     empty_md5 = md5_bytes(empty_svg_bytes)
     
-    # ---- Build Scratch blocks ----
-    print("\n[INFO] Building Scratch blocks...")
-    b = B()
-    
-    # Script: When flag clicked → init → wait → forever (keep alive)
-    start = b.flag()
-    init = b.win11_init()
     wait1 = b.wait(0.5)
     
     # Forever loop (keeps the project running)
