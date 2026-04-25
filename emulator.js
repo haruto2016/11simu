@@ -53,12 +53,11 @@ async function initEmulator() {
 
     const settings = {
         canvas: document.getElementById("screen"),
-        wasm_path: "https://copy.sh/v86/v86.wasm",
-        bios: { url: "https://copy.sh/v86/bios/seabios.bin" },
-        vga_bios: { url: "https://copy.sh/v86/bios/vgabios.bin" },
+        wasm_path: "v86.wasm",
+        bios: { url: "seabios.bin" },
+        vga_bios: { url: "vgabios.bin" },
         
         // Use an optimized Windows image if available, else boot from ISO
-        // For demonstration, we use a small Linux to show functionality
         cdrom: { url: "https://copy.sh/v86/images/linux.iso" }, 
         
         memory_size: 512 * 1024 * 1024, // Browser can struggle with 4GB, starting with 512MB
