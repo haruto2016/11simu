@@ -104,10 +104,15 @@ def networking(ws):
         # For now, we relay or log (Development stage)
         pass
 
-# --- Helper to serve the frontend (will be created) ---
+# --- Static Files (JS/CSS) ---
+@app.route("/<path:path>")
+def serve_static(path):
+    return send_from_directory(".", path)
+
+# --- Helper to serve the frontend ---
 @app.route("/vbox")
 def serve_vbox():
-    return send_file("vbox.html")
+    return send_from_directory(".", "vbox.html")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
