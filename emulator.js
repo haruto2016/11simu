@@ -133,9 +133,9 @@ let isoObjectURL = null;
 async function initEmulator() {
     const settings = {
         canvas: document.getElementById("screen"),
-        wasm_path: new URL("vbox-web-app/v86/v86.wasm", window.location.href).href,
-        bios: { url: new URL("vbox-web-app/v86/seabios.bin", window.location.href).href },
-        vga_bios: { url: new URL("vbox-web-app/v86/vgabios.bin", window.location.href).href },
+        wasm_path: new URL("v86/v86.wasm", window.location.href).href,
+        bios: { url: new URL("v86/seabios.bin", window.location.href).href },
+        vga_bios: { url: new URL("v86/vgabios.bin", window.location.href).href },
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
         autostart: true,
@@ -209,3 +209,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('cloud-storage-status').style.color = "#00ff00";
     }
 });
+
+// --- UI Management ---
+function showModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.add('active');
+}
+
+function hideModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('active');
+}
+
+function selectVM(id) {
+    document.querySelectorAll('.vm-item').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+}
