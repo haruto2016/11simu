@@ -111,11 +111,13 @@ function stopVM() {
 async function saveVMState() {
     if (!emulator) return;
     
-    const statusText = document.getElementById('stat-text');
-    statusText.innerText = "Saving to browser storage...";
-    
-    try {
-        const state = await emulator.save_state();
+    document.getElementById('stat-text').innerText = "状態を保存中... (ページを閉じないでください)";
+    emulator.save_state(async function(error, state) {
+        if (error) {
+            console.error(error);
+            alert("保存に失敗しました");
+            return;
+        }
         await saveStateToDB(currentVM.id, state);
         
         const now = new Date().toLocaleString();
@@ -136,11 +138,13 @@ async function initEmulator() {
         wasm_path: new URL("v86/v86.wasm", window.location.href).href,
         bios: { url: new URL("v86/seabios.bin", window.location.href).href },
         vga_bios: { url: new URL("v86/vgabios.bin", window.location.href).href },
-        memory_size: 2048 * 1024 * 1024, // 2GB RAM (Max stable for most browsers)
-        vga_memory_size: 128 * 1024 * 1024, // 128MB Video RAM
+        memory_size: 2048 * 1024 * 1024,
+        vga_memory_size: 128 * 1024 * 1024,
         acpi: true,
         autostart: true,
-        fastboot: true, // Enable fast boot logic
+        fastboot: true,
+        async_nodes: true, // Parallelize resource loading
+        network_relay_url: "wss://relay.widgetry.org/", // Enable fast networking
     };
 
     // Load ISO if selected
