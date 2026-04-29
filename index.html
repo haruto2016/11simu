@@ -3,105 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 11 Simulator - TurboWarp</title>
+    <title>Windows 11 Experience Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0a;
+            --accent: #0078d4;
+        }
         body {
-            background: #000;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
-            color: #fff;
+            margin: 0;
             overflow: hidden;
         }
-        h1 {
-            font-size: 18px;
-            font-weight: 400;
-            margin-bottom: 12px;
-            opacity: 0.7;
-        }
-        .instructions {
-            font-size: 13px;
-            opacity: 0.5;
-            margin-bottom: 16px;
+        .container {
             text-align: center;
-            line-height: 1.6;
+            max-width: 800px;
         }
-        .instructions code {
-            background: rgba(255,255,255,0.1);
-            padding: 1px 6px;
-            border-radius: 3px;
-            font-size: 12px;
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #0078d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        iframe {
-            width: 960px;
-            height: 720px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            background: #1a1a2e;
+        p {
+            opacity: 0.7;
+            margin-bottom: 3rem;
         }
-        @media (max-width: 1000px) {
-            iframe {
-                width: 95vw;
-                height: 71.25vw;
-            }
-        }
-        .btn-row {
+        .choices {
             display: flex;
-            gap: 12px;
-            margin-top: 12px;
+            gap: 30px;
+            justify-content: center;
         }
-        .btn {
-            padding: 8px 20px;
-            background: #0078D4;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            width: 300px;
             cursor: pointer;
-            font-size: 13px;
-            font-family: inherit;
-            transition: background 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: white;
         }
-        .btn:hover { background: #1a8ae6; }
-        .btn.secondary {
-            background: rgba(255,255,255,0.1);
+        .card:hover {
+            transform: translateY(-10px);
+            background: rgba(0, 120, 212, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
-        .btn.secondary:hover {
-            background: rgba(255,255,255,0.2);
+        .card h2 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+        .card p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            height: 60px;
+        }
+        .icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <h1>🪟 Windows 11 Simulator</h1>
-    <div class="instructions">
-        TurboWarpエディタで <code>windows11_sim.sb3</code> を読み込み、<br>
-        カスタム拡張機能 <code>win11_extension.js</code> をロード後、🏳 グリーンフラッグをクリック
+    <div class="container">
+        <h1>Windows 11 Project</h1>
+        <p>エミュレーター(VirtualBox)またはシミュレーターを選択してください</p>
+        
+        <div class="choices">
+            <a href="vbox.html" class="card">
+                <span class="icon">📦</span>
+                <h2>VirtualBox Web</h2>
+                <p>ブラウザで本物のWindows 11を動かす。クラウドストレージ対応、ISO選択可能。</p>
+            </a>
+            
+            <a href="https://turbowarp.org/editor" target="_blank" class="card">
+                <span class="icon">🕹️</span>
+                <h2>Simulator</h2>
+                <p>TurboWarpを使用した高速なUIシミュレーター。軽量でスムーズに動作します。</p>
+            </a>
+        </div>
     </div>
-
-    <iframe 
-        src="https://turbowarp.org/editor?fps=60&clones=Infinity&offscreen&interpolate&hqpen&limitless&turbo"
-        id="turbowarp-frame"
-        allow="clipboard-read; clipboard-write; gamepad; microphone"
-        allowfullscreen
-    ></iframe>
-
-    <div class="btn-row">
-        <button class="btn" onclick="openFullscreen()">📺 フルスクリーン</button>
-        <button class="btn secondary" onclick="window.open('https://turbowarp.org/editor','_blank')">🔗 新しいタブで開く</button>
-    </div>
-
-    <script>
-        function openFullscreen() {
-            const iframe = document.getElementById('turbowarp-frame');
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.webkitRequestFullscreen) {
-                iframe.webkitRequestFullscreen();
-            }
-        }
-    </script>
 </body>
 </html>

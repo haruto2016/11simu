@@ -11,6 +11,9 @@ import json
 import uuid
 from werkzeug.utils import secure_filename
 
+import boto3
+from botocore.client import Config
+
 app = Flask(__name__)
 CORS(app)
 sock = Sock(app)
@@ -20,6 +23,23 @@ UPLOAD_FOLDER = 'storage'
 ISO_FOLDER = os.path.join(UPLOAD_FOLDER, 'isos')
 DISK_FOLDER = os.path.join(UPLOAD_FOLDER, 'disks')
 STATE_FOLDER = os.path.join(UPLOAD_FOLDER, 'states')
+
+# OCI Object Storage (S3 Compatible)
+OCI_ACCESS_KEY = os.environ.get('OCI_ACCESS_KEY')
+OCI_SECRET_KEY = os.environ.get('OCI_SECRET_KEY')
+OCI_ENDPOINT = os.environ.get('OCI_ENDPOINT') # e.g. https://<namespace>.compat.objectstorage.<region>.oraclecloud.com
+OCI_BUCKET = os.environ.get('OCI_BUCKET', 'vbox-web-disks')
+
+s3 = None
+if OCI_ACCESS_KEY and OCI_SECRET_KEY and OCI_ENDPOINT:
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=OCI_ACCESS_KEY,
+        aws_secret_access_key=OCI_SECRET_KEY,
+        endpoint_url=OCI_ENDPOINT,
+        config=Config(signature_version='s3v4')
+    )
+    print("Cloud Storage: Oracle Object Storage Connected")
 
 for folder in [ISO_FOLDER, DISK_FOLDER, STATE_FOLDER]:
     os.makedirs(folder, exist_ok=True)
@@ -89,8 +109,18 @@ def save_state(vm_id):
     if 'file' not in request.files:
         return jsonify({"status": "error"}), 400
     file = request.files['file']
-    file.save(os.path.join(STATE_FOLDER, f"{vm_id}.bin"))
-    return jsonify({"status": "success"})
+    local_path = os.path.join(STATE_FOLDER, f"{vm_id}.bin")
+    file.save(local_path)
+    
+    # Mirror to Cloud if available
+    if s3:
+        try:
+            s3.upload_file(local_path, OCI_BUCKET, f"states/{vm_id}.bin")
+            print(f"Cloud Backup: {vm_id} synced to OCI")
+        except Exception as e:
+            print(f"Cloud Backup Error: {e}")
+
+    return jsonify({"status": "success", "cloud": s3 is not None})
 
 # --- Networking Relay ---
 # Bridges the VM's raw ethernet frames to a relay or NAT handler

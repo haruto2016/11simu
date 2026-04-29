@@ -1,0 +1,27 @@
+{
+    "name": "Windows 11 Emulator Environment",
+    "image": "mcr.microsoft.com/devcontainers/python:3.10",
+    "features": {
+        "ghcr.io/devcontainers/features/desktop-lite:1": {}
+    },
+    "onCreateCommand": "sudo apt-get update && sudo apt-get install -y qemu-system-x86 qemu-utils novnc websockify",
+    "postCreateCommand": "pip install -r requirements.txt",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    },
+    "forwardPorts": [8080, 6080],
+    "portsAttributes": {
+        "8080": {
+            "label": "Web UI",
+            "onAutoForward": "notify"
+        },
+        "6080": {
+            "label": "VNC WebSocket",
+            "onAutoForward": "ignore"
+        }
+    }
+}

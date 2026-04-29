@@ -133,9 +133,9 @@ let isoObjectURL = null;
 async function initEmulator() {
     const settings = {
         canvas: document.getElementById("screen"),
-        wasm_path: "https://copy.sh/v86/build/v86.wasm",
-        bios: { url: "https://copy.sh/v86/bios/seabios.bin" },
-        vga_bios: { url: "https://copy.sh/v86/bios/vgabios.bin" },
+        wasm_path: "v86/v86.wasm",
+        bios: { url: "v86/seabios.bin" },
+        vga_bios: { url: "v86/vgabios.bin" },
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
         autostart: true,
@@ -157,7 +157,7 @@ async function initEmulator() {
         }
     }
 
-    emulator = new V86Starter(settings);
+    emulator = new V86(settings);
 }
 
 // --- ISO Management ---
