@@ -136,9 +136,11 @@ async function initEmulator() {
         wasm_path: new URL("v86/v86.wasm", window.location.href).href,
         bios: { url: new URL("v86/seabios.bin", window.location.href).href },
         vga_bios: { url: new URL("v86/vgabios.bin", window.location.href).href },
-        memory_size: 512 * 1024 * 1024,
-        vga_memory_size: 32 * 1024 * 1024,
+        memory_size: 2048 * 1024 * 1024, // 2GB RAM (Max stable for most browsers)
+        vga_memory_size: 128 * 1024 * 1024, // 128MB Video RAM
+        acpi: true,
         autostart: true,
+        fastboot: true, // Enable fast boot logic
     };
 
     // Load ISO if selected
