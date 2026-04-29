@@ -133,9 +133,9 @@ let isoObjectURL = null;
 async function initEmulator() {
     const settings = {
         canvas: document.getElementById("screen"),
-        wasm_path: "vbox-web-app/v86/v86.wasm",
-        bios: { url: "vbox-web-app/v86/seabios.bin" },
-        vga_bios: { url: "vbox-web-app/v86/vgabios.bin" },
+        wasm_path: new URL("vbox-web-app/v86/v86.wasm", window.location.href).href,
+        bios: { url: new URL("vbox-web-app/v86/seabios.bin", window.location.href).href },
+        vga_bios: { url: new URL("vbox-web-app/v86/vgabios.bin", window.location.href).href },
         memory_size: 512 * 1024 * 1024,
         vga_memory_size: 32 * 1024 * 1024,
         autostart: true,

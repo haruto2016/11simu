@@ -104,9 +104,9 @@
 
             const settings = {
                 canvas: document.getElementById("screen"),
-                wasm_path: "v86/v86.wasm",
-                bios: { url: "v86/seabios.bin" },
-                vga_bios: { url: "v86/vgabios.bin" },
+                wasm_path: new URL("v86/v86.wasm", window.location.href).href,
+                bios: { url: new URL("v86/seabios.bin", window.location.href).href },
+                vga_bios: { url: new URL("v86/vgabios.bin", window.location.href).href },
                 memory_size: 512 * 1024 * 1024,
                 autostart: true,
                 cdrom: isoObjectURL ? { url: isoObjectURL } : { url: "https://copy.sh/v86/images/linux.iso" }
